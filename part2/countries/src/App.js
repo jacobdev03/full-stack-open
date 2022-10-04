@@ -25,8 +25,14 @@ function App() {
     setSearch(event.target.value);
   };
 
+  const handleShow = (event) => {
+    event.preventDefault();
+    const countryName = event.target.parentElement.firstChild.textContent;
+    const countryObject = filteredResults.filter((el) => el.name.common === countryName);
+    setFilteredResults(countryObject);
+  };
+
   const SingleCountry = ({ filteredResults }) => {
-    console.log(filteredResults);
     return (
       <div>
         <h1>{filteredResults.name.common}</h1>
@@ -45,11 +51,21 @@ function App() {
 
   const DisplayResults = ({ filteredResults }) => {
     if (filteredResults.length === 1) {
-      return <SingleCountry filteredResults={filteredResults[0]} />;
+      return (
+        <div>
+          <SingleCountry filteredResults={filteredResults[0]} />
+        </div>
+      );
     } else if (filteredResults.length > 10) {
       return <p>Too many results, type more filters</p>;
     } else {
-      return filteredResults.map((item) => <p key={item.ccn3}>{item.name.common}</p>);
+      return filteredResults.map((item, index) => {
+        return (
+          <p key={index}>
+            {item.name.common} <button onClick={handleShow}>Show</button>
+          </p>
+        );
+      });
     }
   };
 
