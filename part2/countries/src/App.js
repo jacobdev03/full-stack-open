@@ -5,6 +5,9 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
+  const [weather, setWeather] = useState();
+
+  const api_key = process.env.REACT_APP_API_KEY;
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((res) => {
@@ -32,6 +35,23 @@ function App() {
     setFilteredResults(countryObject);
   };
 
+  const DisplayWeather = ({ capital }) => {
+    useEffect(() => {
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}`)
+        .then((res) => {
+          setWeather(res.data);
+          console.log(weather);
+        });
+    });
+    if (!weather) return <p>No weather data</p>;
+    return (
+      <div>
+        <h2>weather in {capital}</h2>
+      </div>
+    );
+  };
+
   const SingleCountry = ({ filteredResults }) => {
     return (
       <div>
@@ -45,6 +65,7 @@ function App() {
           ))}
         </ul>
         <img src={filteredResults.flags.png} alt="country flag" />
+        <DisplayWeather capital={filteredResults.capital} />
       </div>
     );
   };
