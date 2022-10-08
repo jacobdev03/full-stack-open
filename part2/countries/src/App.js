@@ -44,10 +44,20 @@ function App() {
           console.log(weather);
         });
     });
+
     if (!weather) return <p>No weather data</p>;
+
     return (
       <div>
         <h2>weather in {capital}</h2>
+        <p>
+          Temperature: {Math.round((weather.main.temp - 273.15 + Number.EPSILON) * 100) / 100}{" "}
+          Celsius
+        </p>
+        <img
+          src={`https://openweathermap.org/img/wn/${weather.weather.icon}@2x.png`}
+          alt="weather-icon"
+        />
       </div>
     );
   };
