@@ -42,7 +42,7 @@ function App() {
         .then((res) => {
           setWeather(res.data);
           console.log(weather);
-        });
+        }, []);
     });
 
     if (!weather) return <p>No weather data</p>;
@@ -55,9 +55,10 @@ function App() {
           Celsius
         </p>
         <img
-          src={`https://openweathermap.org/img/wn/${weather.weather.icon}@2x.png`}
+          src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
           alt="weather-icon"
         />
+        <p>wind {weather.wind.speed} m/s</p>
       </div>
     );
   };
