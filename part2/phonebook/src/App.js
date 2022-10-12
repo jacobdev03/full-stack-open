@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Numbers from "./components/Numbers";
 import axios from "axios";
+import phoneService from "./services/phones";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,7 +12,7 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => setPersons(res.data));
+    phoneService.getAll().then((phoneNumbers) => setPersons(phoneNumbers));
   }, []);
 
   const handleSubmit = (event) => {
@@ -27,9 +28,7 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      axios.post("http://localhost:3001/persons", personObject).then((res) => {
-        setPersons(persons.concat(res.data));
-      });
+      phoneService.create(personObject).then((newPerson) => setPersons(persons.concat(newPerson)));
     }
   };
 
