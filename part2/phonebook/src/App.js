@@ -47,6 +47,10 @@ const App = () => {
     event.preventDefault();
     const filterName = event.target.value;
 
+    const handleDelete = (id) => {
+      console.log(id);
+    };
+
     if (filterName !== "") {
       setShowAll(false);
       setNewName(filterName.toLocaleLowerCase());
