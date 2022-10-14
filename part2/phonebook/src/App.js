@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Numbers from "./components/Numbers";
-import axios from "axios";
 import phoneService from "./services/phones";
 
 const App = () => {
@@ -19,15 +18,26 @@ const App = () => {
     event.preventDefault();
     const found = persons.find((p) => p.name === newName);
 
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
+
     if (found) {
-      alert(`${found.name} is already added to phonebook`);
+      if (
+        window.confirm(
+          `${found.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        phoneService
+          .update(found.id, personObject)
+          .then((newPhone) =>
+            persons.map((person) => (person.id !== found.id ? person : newPhone))
+          );
+      }
     } else if (newName === "" || newNumber === "") {
       alert("Fields can't be empty");
     } else {
-      const personObject = {
-        name: newName,
-        number: newNumber,
-      };
       phoneService.create(personObject).then((newPerson) => setPersons(persons.concat(newPerson)));
     }
   };
@@ -46,10 +56,6 @@ const App = () => {
   const handleFilter = (event) => {
     event.preventDefault();
     const filterName = event.target.value;
-
-    const handleDelete = (id) => {
-      console.log(id);
-    };
 
     if (filterName !== "") {
       setShowAll(false);
