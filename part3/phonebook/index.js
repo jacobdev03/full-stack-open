@@ -60,10 +60,25 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  const person = request.body;
-  person.id = generateId();
-  persons = persons.concat(person);
-  response.json(person);
+  const body = request.body;
+  const found = persons.find((p) => p.name === body.name);
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "The name or number is missing",
+    });
+  } else if (found) {
+    return response.status(400).json({
+      error: "The name already exists in the phonebook",
+    });
+  } else {
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: generateId(),
+    };
+    persons = persons.concat(person);
+    return response.json(person);
+  }
 });
 
 const PORT = 3001;
