@@ -22,24 +22,23 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-app.post("/api/persons", (request, response) => {
-  const body = request.body;
-
-  if (body.name === undefined) {
-    return response.status(400).json({ error: "content missing" });
-  }
+app.post("/api/persons", (request, response, next) => {
+  const { name, number } = request.body;
 
   const person = new Person({
-    name: body.name,
-    number: body.number,
+    name: name,
+    number: number,
   });
 
-  person.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
       if (person) {
@@ -48,10 +47,7 @@ app.get("/api/persons/:id", (request, response) => {
         response.status(404).end();
       }
     })
-    .catch((error) => {
-      console.log(error);
-      response.status(400).send({ error: "malformatted id" });
-    });
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -62,7 +58,27 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((err) => next(err));
 });
 
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.name);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  } else if ((request.body.name = undefined)) {
+    return response.status(400).send({ error: "content missing" });
+  }
+
+  next(error);
+};
+
+app.use(unknownEndpoint);
+
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use(errorHandler);
