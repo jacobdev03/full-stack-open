@@ -1,0 +1,16 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "HTML is easy",
+      "date": "2022-1-17T17:30:31.098Z",
+      "important": false
+    },
+    {
+      "content": "CSS5",
+      "date": "2022-10-08T21:39:50.941Z",
+      "important": false,
+      "id": 2
+    }
+  ]
+}
