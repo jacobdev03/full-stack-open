@@ -4,6 +4,7 @@ import Form from "./components/Form";
 import Numbers from "./components/Numbers";
 import phoneService from "./services/phones";
 import Notification from "./components/Notification";
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [notiMessage, setNotiMessage] = useState(null);
 
   useEffect(() => {
     phoneService.getAll().then((phoneNumbers) => setPersons(phoneNumbers));
@@ -36,16 +38,20 @@ const App = () => {
           .then((newPhone) =>
             persons.map((person) => (person.id !== found.id ? person : newPhone))
           );
-        setErrorMessage(`Replaced number`);
+        setNotiMessage(`Replaced number`);
         setTimeout(() => {
-          setErrorMessage(null);
+          setNotiMessage(null);
         }, 2000);
       }
     } else if (newName === "" || newNumber === "") {
       alert("Fields can't be empty");
     } else {
-      phoneService.create(personObject).then((newPerson) => setPersons(persons.concat(newPerson)));
-      setErrorMessage(`Added ${personObject.name}`);
+      phoneService
+        .create(personObject)
+        .then((newPerson) => setPersons(persons.concat(newPerson)))
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+        });
       setTimeout(() => {
         setErrorMessage(null);
       }, 2000);
@@ -81,7 +87,8 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
+      <Notification message={notiMessage} />
+      <ErrorMessage message={errorMessage} />
       <Filter handleFilter={handleFilter} />
 
       <Form
