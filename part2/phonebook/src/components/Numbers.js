@@ -3,7 +3,7 @@ import axios from "axios";
 const Numbers = ({ personsToShow }) => {
   const handleDelete = (person) => {
     if (window.confirm(`Do you really want to delete ${person.name}?`)) {
-      axios.delete(`http://localhost:3001/api/persons/${person.id}`);
+      axios.delete(`/api/persons/${person.id}`);
     }
   };
   return (
